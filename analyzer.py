@@ -93,10 +93,11 @@ class Best:
         # average of top 10 of recent 30
         recentavg = round(sum([x.rating for x in self.recent[-10:]])/10, 2)
 
-        return ('Best 30:\n'+'\n'.join([str(x) for x in reversed(self.top)])
-                + f'\n30 Rating: {topavg}\n\nBest 10 of Recent 30:\n' +
-                '\n'.join([str(x) for x in reversed(self.recent[-10:])])
-                + f'\nRecent Rating:{recentavg}\n\nOverall Rating: {(sum([x.rating for x in self.top])+sum([x.rating for x in self.recent[-10:]]))/40}')
+        return ('Best 30:\n'+'\n'.join([str(x) for x in reversed(self.top)]) +
+                f'\n30 Rating: {topavg}' +
+                '\n\nBest 10 of Recent 30:\n' + '\n'.join([str(x) for x in reversed(self.recent[-10:])]) +
+                f'\nRecent Rating:{recentavg}'+
+                '\n\nOverall Rating: {(sum([x.rating for x in self.top])+sum([x.rating for x in self.recent[-10:]]))/40}')
         # overall rating is always rounded down by two decimal places
 
 
