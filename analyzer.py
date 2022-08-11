@@ -3,7 +3,7 @@ from bisect import insort
 import math
 
 # path to your file here
-path = 'your file here'
+path = 'E:\Win Env\chuni analyzer\\akane.gg8-10-22.htm'
 f = open(path, encoding='utf-8').read()
 
 tree = html.fromstring(f)
@@ -97,7 +97,7 @@ class Best:
                 f'\n30 Rating: {topavg}' +
                 '\n\nBest 10 of Recent 30:\n' + '\n'.join([str(x) for x in reversed(self.recent[-10:])]) +
                 f'\nRecent Rating:{recentavg}'+
-                '\n\nOverall Rating: {(sum([x.rating for x in self.top])+sum([x.rating for x in self.recent[-10:]]))/40}')
+                f'\n\nOverall Rating: {(sum([x.rating for x in self.top])+sum([x.rating for x in self.recent[-10:]]))/40}')
         # overall rating is always rounded down by two decimal places
 
 
