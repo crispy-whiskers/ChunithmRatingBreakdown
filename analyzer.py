@@ -1,14 +1,6 @@
 from lxml import html
 from bisect import insort
-import math
-
-# path to your file here
-path = 'your path here'
-
-f = open(path, encoding='utf-8').read()
-
-tree = html.fromstring(f)
-
+import math, sys
 
 class Play:
     def __init__(self, level, score, title):
@@ -49,16 +41,7 @@ class Play:
         return self.title.__eq__(other.title)
 
 
-scores = [
-    Play(
-        float(x.getchildren()[2].values()[1]),
-        int(x.getchildren()[3].text.strip().replace(',', '')),
-        x.getchildren()[1].getchildren()[0].getchildren()[0].text) 
-        for x in list(filter(lambda i: len(i.getchildren()[2].values()[1]) > 1, 
-        tree.xpath('//tr')[1:])) 
-    # we do a little scraping
-    # you can modify this for your own purposes
-]
+
 
 
 class Best:
@@ -103,12 +86,25 @@ class Best:
                 f'\n\nOverall Rating: {(sum([x.rating for x in self.top])+sum([x.rating for x in self.recent[-10:]]))/40}')
         # overall rating is always rounded down by two decimal places
 
+if __name__ == "__main__":
+    f = open(sys.argv[1], encoding='utf-8').read()
 
-best = Best()
-for x in reversed(scores):
-    best.add(x)
+    tree = html.fromstring(f)
+    scores = [
+        Play(
+            float(x.getchildren()[2].values()[1]),
+            int(x.getchildren()[3].text.strip().replace(',', '')),
+            x.getchildren()[1].getchildren()[0].getchildren()[0].text) 
+            for x in list(filter(lambda i: len(i.getchildren()[2].values()[1]) > 1, 
+            tree.xpath('//tr')[1:])) 
+        # we do a little scraping
+        # you can modify this for your own purposes
+    ]
+    best = Best()
+    for x in reversed(scores):
+        best.add(x)
 
-print(best)
+    print(best)
 
 
 #title /html/body/div[2]/div/div/div/div/table/tbody/tr[1]/td[2]/div/a
