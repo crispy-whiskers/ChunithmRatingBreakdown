@@ -31,8 +31,9 @@ class Play:
         self.rating = rating/100
 
     def __str__(self):
-        return f'{round(self.rating,2)}\tfrom {self.score}\ton {self.level}\t{self.title}'
+        return f'{round(self.rating,2)}\tfrom '+'{:,}'.format(self.score)+f'\ton {self.level}\t{self.title}'
         #string representation of score
+        #{:,} for comma denoted numbers
 
     def __lt__(self, other):
         return self.rating < other.rating
@@ -106,7 +107,7 @@ if __name__ == "__main__":
 
     print(best)
 
-
+#for your purposes: xpath of every bit of data
 #title /html/body/div[2]/div/div/div/div/table/tbody/tr[1]/td[2]/div/a
 #level /html/body/div[2]/div/div/div/div/table/tbody/tr[1]/td[3]/span
 #score /html/body/div[2]/div/div/div/div/table/tbody/tr[1]/td[4]
