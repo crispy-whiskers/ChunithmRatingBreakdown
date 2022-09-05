@@ -3,7 +3,7 @@ from bisect import insort
 import math
 
 # path to your file here
-path = 'E:\Win Env\chuni analyzer\\akane.gg9-4-22.htm'
+path = 'your path here'
 
 f = open(path, encoding='utf-8').read()
 
