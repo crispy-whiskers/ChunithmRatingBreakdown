@@ -3,7 +3,7 @@ from bisect import insort
 import math
 
 # path to your file here
-path = 'E:\Win Env\chuni analyzer\\akane.gg8-10-22.htm'
+path = 'your file here'
 f = open(path, encoding='utf-8').read()
 
 tree = html.fromstring(f)
@@ -52,7 +52,9 @@ scores = [
     Play(
         float(x.getchildren()[2].values()[1]),
         int(x.getchildren()[3].text.strip().replace(',', '')),
-        x.getchildren()[1].getchildren()[0].getchildren()[0].text) for x in tree.xpath('//tr')[1:]
+        x.getchildren()[1].getchildren()[0].getchildren()[0].text) 
+        for x in list(filter(lambda i: len(i.getchildren()[2].values()[1]) > 1, 
+        tree.xpath('//tr')[1:])) 
     # we do a little scraping
     # you can modify this for your own purposes
 ]
