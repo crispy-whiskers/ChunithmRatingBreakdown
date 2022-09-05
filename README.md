@@ -7,8 +7,10 @@ Requires any `python3` and the library `lxml`.
 
 Do `pip install lxml` to install the dependency.
 
-At the top of the file, put the path to the downloaded playlog HTML file. 
+Go to the Mythos WebUI, navigate to CHUNITHM, then to your playlog. Save the current webpage and place it in the same folder as this script.
 
-To run the script, just do `python3 analyzer.py` 
+To run the script, just do `python3 analyzer.py YourFileNameHere.htm` 
+
+
 
 
