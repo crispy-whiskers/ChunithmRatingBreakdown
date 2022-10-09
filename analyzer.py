@@ -3,7 +3,8 @@ from bisect import insort
 import math, sys
 
 class Play:
-    def __init__(self, level, score, title):
+    def __init__(self, level, score, title, difficulty):
+        #print(difficulty)
         self.title = title
         self.score = score
         self.level = level
@@ -39,7 +40,10 @@ class Play:
         return self.rating < other.rating
 
     def __eq__(self, other):
-        return self.title.__eq__(other.title)
+        return self.title.__eq__(other.title) and self.score == other.score
+    
+    def __repr__(self):
+        return self.__str__()
 
 
 
@@ -49,15 +53,14 @@ class Best:
     def __init__(self):
         self.top = []
         self.recent = []
-        self.recentlen = 30
 
     def add(self, play):
-        if (play not in self.top):  # check for dupes
-            insort(self.top, play)
+        if (play.title not in [x.title for x in self.top]):  # check for dupes of same song
+            insort(self.top, play) # insert into ascending order
         else:  # check if play is better than previous play
             i = -1
             for x in self.top:  # find dupe
-                if x.title == play.title and play.rating > x.rating:
+                if x.title == play.title and play.score > x.score:
                     i = self.top.index(x)
             if i != -1:  # remove if its worse
                 self.top.pop(i)
@@ -66,25 +69,41 @@ class Best:
         if len(self.top) > 30:  # keep length for inserting
             self.top.pop(0)
 
-        self.recent.append(play)  # add play to recent scores (duh)
-        if len(self.recent) > self.recentlen:  # keep length
-            if play.score < 1_007_500:  # SSS scores permanently stay in your recent
-                self.recent.pop(0)
-            else:
-                self.recentlen += 1
+        ratingProtection = False
 
+        if play.score > 1_007_500:  
+                
+                # the score is a triple S, meaning it wont affect the recent average if it doesnt help the recent average
+                # if the rating of the play is less than the average of the recent frame without the oldest play in recent, protection kicks in
+
+                current = sorted(self.recent)[20].rating
+                added = sorted(self.recent[1:]+[play])[20].rating
+                if added < current: 
+                    ratingProtection = True
+            
+        if not ratingProtection:
+            self.recent.append(play) # add play to recent scores if rating protection hasnt kicked in
+
+        if len(self.recent) > 30:  # keep length
+            
+            # if(self.recent[0].score>1_007_500):
+            #     print('oh boy')
+            self.recent.pop(0) # remove a score from the recent frame normally
+
+                
+                
+                
     def __str__(self):
-        self.recent.sort()
         topavg = round(sum([x.rating for x in self.top]) /
                        30, 2)  # average of top 30
         # average of top 10 of recent 30
-        recentavg = round(sum([x.rating for x in self.recent[-10:]])/10, 2)
+        recentavg = round(sum([x.rating for x in sorted(self.recent)[-10:]])/10, 2)
 
-        return ('Best 30:\n'+'\n'.join([str(x) for x in reversed(self.top)]) +
-                f'\n30 Rating: {topavg}' +
-                '\n\nBest 10 of Recent 30:\n' + '\n'.join([str(x) for x in reversed(self.recent[-10:])]) +
-                f'\nRecent Rating:{recentavg}'+
-                f'\n\nOverall Rating: {(sum([x.rating for x in self.top])+sum([x.rating for x in self.recent[-10:]]))/40}')
+        return( 'Best 30:\n'+'\n'.join([str(x) for x in reversed(self.top)]) +
+                f'\n30 Rating: {topavg}' 
+                +'\n\nBest 10 of Recent 30:\n' + '\n'.join([str(x) for x in reversed(sorted(self.recent)[-10:])])+ 
+                f'\nRecent Rating:{recentavg}'
+                +f'\n\nOverall Rating: {(sum([x.rating for x in self.top])+sum([x.rating for x in sorted(self.recent)[-10:]]))/40}')
         # overall rating is always rounded down by two decimal places
 
 if __name__ == "__main__":
@@ -93,11 +112,13 @@ if __name__ == "__main__":
     tree = html.fromstring(f)
     scores = [
         Play(
-            float(x.getchildren()[2].values()[1]),
+            float(x.getchildren()[2].values()[1]), 
             int(x.getchildren()[3].text.strip().replace(',', '')),
-            x.getchildren()[1].getchildren()[0].getchildren()[0].text) 
-            for x in list(filter(lambda i: len(i.getchildren()[2].values()[1]) > 1, 
-            tree.xpath('//tr')[1:])) 
+            x.getchildren()[1].getchildren()[0].getchildren()[0].text,
+            x.getchildren()[2].values()[0]
+        ) 
+        for x in list(filter(lambda i: len(i.getchildren()[2].values()[1]) > 1, 
+        tree.xpath('//tr')[1:])) 
         # we do a little scraping
         # you can modify this for your own purposes
     ]
