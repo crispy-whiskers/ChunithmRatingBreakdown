@@ -60,8 +60,9 @@ class Best:
         else:  # check if play is better than previous play
             i = -1
             for x in self.top:  # find dupe
-                if x.title == play.title and play.score > x.score:
+                if x.title == play.title and play.score > x.score and play.rating >= x.rating:
                     i = self.top.index(x)
+                    break
             if i != -1:  # remove if its worse
                 self.top.pop(i)
                 insort(self.top, play)
@@ -125,6 +126,8 @@ if __name__ == "__main__":
     best = Best()
     for x in reversed(scores):
         best.add(x)
+
+    
 
     print(best)
 
