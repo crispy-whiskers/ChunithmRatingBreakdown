@@ -4,7 +4,6 @@ import math, sys
 
 class Play:
     def __init__(self, level, score, title, difficulty):
-        #print(difficulty)
         self.title = title
         self.score = score
         self.level = level
@@ -32,8 +31,9 @@ class Play:
         self.rating = rating/100
 
     def __str__(self):
-        return f'{round(self.rating,2)}\tfrom '+'{:,}'.format(self.score)+f'\ton {self.level}\t{self.title}'
+        return f'{math.floor(self.rating*100)/100:.2f}\tfrom '+'{:,}'.format(self.score)+f'\ton {self.level}\t{self.title}'
         #string representation of score
+        #rating displayed rounded down
         #{:,} for comma denoted numbers
 
     def __lt__(self, other):
@@ -44,9 +44,6 @@ class Play:
     
     def __repr__(self):
         return self.__str__()
-
-
-
 
 
 class Best:
@@ -78,7 +75,7 @@ class Best:
                 # if the rating of the play is less than the average of the recent frame without the oldest play in recent, protection kicks in
 
                 current = sorted(self.recent)[20].rating
-                added = sorted(self.recent[1:]+[play])[20].rating
+                added = sorted(self.recent[1:]+[play])[-10 if len(self.recent) > 10 else 0].rating
                 if added < current: 
                     ratingProtection = True
             
@@ -87,25 +84,24 @@ class Best:
 
         if len(self.recent) > 30:  # keep length
             
-            # if(self.recent[0].score>1_007_500):
-            #     print('oh boy')
             self.recent.pop(0) # remove a score from the recent frame normally
 
                 
                 
                 
     def __str__(self):
-        topavg = round(sum([x.rating for x in self.top]) /
-                       30, 2)  # average of top 30
-        # average of top 10 of recent 30
-        recentavg = round(sum([x.rating for x in sorted(self.recent)[-10:]])/10, 2)
+        topavg = round(sum([x.rating for x in self.top]) / 30 , 7)
+        # average of top 30, with rounding to prevent floating point errors
+        recentavg = round(sum([x.rating for x in sorted(self.recent)[-10:]])/10, 7)
+        # average of top 10 of recent 30, with rounding to prevent floating point errors
 
         return( 'Best 30:\n'+'\n'.join([str(x) for x in reversed(self.top)]) +
                 f'\n30 Rating: {topavg}' 
                 +'\n\nBest 10 of Recent 30:\n' + '\n'.join([str(x) for x in reversed(sorted(self.recent)[-10:])])+ 
                 f'\nRecent Rating:{recentavg}'
                 +f'\n\nOverall Rating: {(sum([x.rating for x in self.top])+sum([x.rating for x in sorted(self.recent)[-10:]]))/40}')
-        # overall rating is always rounded down by two decimal places
+        # overall rating is always rounded down by two decimal places, but keeping raw decimal
+        # so you can see exactly where you are
 
 if __name__ == "__main__":
     f = open(sys.argv[1], encoding='utf-8').read()
@@ -123,11 +119,11 @@ if __name__ == "__main__":
         # we do a little scraping
         # you can modify this for your own purposes
     ]
+
+    #run the stuff
     best = Best()
     for x in reversed(scores):
         best.add(x)
-
-    
 
     print(best)
 
