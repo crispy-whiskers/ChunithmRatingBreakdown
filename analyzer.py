@@ -44,7 +44,10 @@ class Play:
     
     def __repr__(self):
         return self.__str__()
-
+def insert_string(string, position, character):
+    list2=list(string)
+    list2[position]=character
+    return ''.join(list2)
 
 class Best:
     def __init__(self):
@@ -95,9 +98,10 @@ class Best:
         recentavg = round(sum([x.rating for x in sorted(self.recent)[-10:]])/10, 7)
         # average of top 10 of recent 30, with rounding to prevent floating point errors
 
+
         return( 'Best 30:\n'+'\n'.join([str(x) for x in reversed(self.top)]) +
                 f'\n30 Rating: {topavg}' 
-                +'\n\nBest 10 of Recent 30:\n' + '\n'.join([str(x) for x in reversed(sorted(self.recent)[-10:])])+ 
+                +'\n\nBest 10 of Recent 30:\n' + '\n'.join([str(x)+f' ({30-self.recent.index(x)}/30)' for x in reversed(sorted(self.recent)[-10:])])+ 
                 f'\nRecent Rating:{recentavg}'
                 +f'\n\nOverall Rating: {(sum([x.rating for x in self.top])+sum([x.rating for x in sorted(self.recent)[-10:]]))/40}')
         # overall rating is always rounded down by two decimal places, but keeping raw decimal
