@@ -1,3 +1,6 @@
+# DEPRECATED
+A new Mythos WebUI is in effect. As such, this code is no longer functional. Please use KamaiTachi to track your Mythos scores.
+
 # Chunithm Rating Breakdown
 A handy little script to break down your rating on the Mythos network. You can adapt this to your own purposes given you have your full playlog.
 
